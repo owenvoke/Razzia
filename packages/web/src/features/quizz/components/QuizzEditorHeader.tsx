@@ -7,12 +7,22 @@ import {
 } from "@razzia/web/features/game/contexts/socket-context"
 import { useQuizzEditor } from "@razzia/web/features/quizz/contexts/quizz-editor-context"
 import { useNavigate } from "@tanstack/react-router"
+import clsx from "clsx"
+import { Settings } from "lucide-react"
 import type { ChangeEvent } from "react"
 import toast from "react-hot-toast"
 import { useTranslation } from "react-i18next"
 
 const QuizzEditorHeader = () => {
-  const { quizzId, subject, setSubject, questions } = useQuizzEditor()
+  const {
+    quizzId,
+    subject,
+    setSubject,
+    settings,
+    isSettingsOpen,
+    toggleSettings,
+    questions,
+  } = useQuizzEditor()
   const { socket } = useSocket()
   const navigate = useNavigate()
   const { t } = useTranslation()
@@ -23,9 +33,14 @@ const QuizzEditorHeader = () => {
 
   const handleSave = () => {
     if (quizzId) {
-      socket.emit(EVENTS.QUIZZ.UPDATE, { id: quizzId, subject, questions })
+      socket.emit(EVENTS.QUIZZ.UPDATE, {
+        id: quizzId,
+        subject,
+        settings,
+        questions,
+      })
     } else {
-      socket.emit(EVENTS.QUIZZ.SAVE, { subject, questions })
+      socket.emit(EVENTS.QUIZZ.SAVE, { subject, settings, questions })
     }
   }
 
@@ -56,6 +71,18 @@ const QuizzEditorHeader = () => {
       </div>
 
       <div className="flex gap-2">
+        <Button
+          className={clsx(
+            "text-md px-3 py-2 font-semibold",
+            isSettingsOpen
+              ? "bg-primary text-white"
+              : "bg-accent text-accent-foreground",
+          )}
+          onClick={toggleSettings}
+          title={t("quizz:settings.title")}
+        >
+          <Settings className="size-5" />
+        </Button>
         <Button
           className="text-md bg-accent text-accent-foreground px-4 py-2 font-semibold"
           onClick={() => navigate({ to: "/manager" })}

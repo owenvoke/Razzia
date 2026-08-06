@@ -44,5 +44,14 @@
     "single": "Scelta singola",
     "multi": "Scelta multipla"
   },
+  "settings": {
+    "title": "Impostazioni del quiz",
+    "leaderboard": "Classifica",
+    "leaderboardMode": "Mostra la classifica",
+    "leaderboardMode.question": "Dopo ogni domanda",
+    "leaderboardMode.end": "Solo alla fine",
+    "leaderboardModeHint.question": "La classifica interrompe la partita dopo ogni domanda",
+    "leaderboardModeHint.end": "La classifica viene mostrata una volta, subito prima del podio"
+  },
   "titleQuizzPlaceholder": "Titolo del quiz..."
 }

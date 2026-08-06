@@ -44,5 +44,14 @@
     "single": "単一選択",
     "multi": "複数選択"
   },
+  "settings": {
+    "title": "クイズ設定",
+    "leaderboard": "ランキング",
+    "leaderboardMode": "ランキングの表示",
+    "leaderboardMode.question": "毎問のあと",
+    "leaderboardMode.end": "最後のみ",
+    "leaderboardModeHint.question": "毎問のあとにランキングでゲームを中断します",
+    "leaderboardModeHint.end": "表彰台の直前に一度だけランキングを表示します"
+  },
   "titleQuizzPlaceholder": "クイズのタイトル..."
 }

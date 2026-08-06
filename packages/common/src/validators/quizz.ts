@@ -1,4 +1,6 @@
 import {
+  DEFAULT_QUIZZ_SETTINGS,
+  LEADERBOARD_MODES,
   MEDIA_TYPES,
   QUESTION_TYPES,
   SCORING_MODES,
@@ -51,8 +53,17 @@ const questionValidator = z.preprocess(
   }),
 )
 
+// Quizzes saved before settings existed fall back to the defaults, which keep
+// the leaderboard between every question.
+const quizzSettingsValidator = z.object({
+  leaderboard: z
+    .enum(LEADERBOARD_MODES)
+    .default(DEFAULT_QUIZZ_SETTINGS.leaderboard),
+})
+
 export const quizzValidator = z.object({
   subject: z.string().min(1, "errors:quizz.subjectEmpty"),
+  settings: quizzSettingsValidator.default(DEFAULT_QUIZZ_SETTINGS),
   questions: z.array(questionValidator).min(1, "errors:quizz.noQuestions"),
 })
 

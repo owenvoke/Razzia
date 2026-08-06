@@ -1,4 +1,5 @@
 import type {
+  LEADERBOARD_MODES,
   MEDIA_TYPES,
   QUESTION_TYPES,
   SCORING_MODES,
@@ -51,8 +52,17 @@ export interface Question {
   options?: QuestionOptions
 }
 
+export type LeaderboardMode =
+  (typeof LEADERBOARD_MODES)[keyof typeof LEADERBOARD_MODES]
+
+export interface QuizzSettings {
+  /** How often the leaderboard interrupts the game. */
+  leaderboard: LeaderboardMode
+}
+
 export interface Quizz {
   subject: string
+  settings: QuizzSettings
   questions: Question[]
 }
 

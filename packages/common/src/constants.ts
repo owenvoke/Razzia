@@ -65,6 +65,17 @@ export const NO_TIME_LIMIT = -1
 
 export const MAX_POINTS = 1000
 
+export const LEADERBOARD_MODES = {
+  /** After every question. */
+  QUESTION: "question",
+  /** Once, just before the podium. */
+  END: "end",
+} as const
+
+export const DEFAULT_QUIZZ_SETTINGS = {
+  leaderboard: LEADERBOARD_MODES.QUESTION,
+}
+
 export const QUESTION_TYPES = {
   SINGLE: "single",
   MULTI: "multi",

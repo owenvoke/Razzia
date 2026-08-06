@@ -44,5 +44,14 @@
     "single": "Choix unique",
     "multi": "Choix multiple"
   },
+  "settings": {
+    "title": "Paramètres du quizz",
+    "leaderboard": "Classement",
+    "leaderboardMode": "Afficher le classement",
+    "leaderboardMode.question": "Après chaque question",
+    "leaderboardMode.end": "À la fin seulement",
+    "leaderboardModeHint.question": "Le classement interrompt la partie après chaque question",
+    "leaderboardModeHint.end": "Le classement est affiché une fois, juste avant le podium"
+  },
   "titleQuizzPlaceholder": "Titre du quizz..."
 }

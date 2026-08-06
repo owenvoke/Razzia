@@ -44,5 +44,14 @@
     "single": "Einzelauswahl",
     "multi": "Mehrfachauswahl"
   },
+  "settings": {
+    "title": "Quiz-Einstellungen",
+    "leaderboard": "Rangliste",
+    "leaderboardMode": "Rangliste zeigen",
+    "leaderboardMode.question": "Nach jeder Frage",
+    "leaderboardMode.end": "Nur am Ende",
+    "leaderboardModeHint.question": "Die Rangliste unterbricht das Spiel nach jeder Frage",
+    "leaderboardModeHint.end": "Die Rangliste wird einmal direkt vor dem Podium gezeigt"
+  },
   "titleQuizzPlaceholder": "Quiz-Titel..."
 }

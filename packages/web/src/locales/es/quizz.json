@@ -44,5 +44,14 @@
     "single": "Opción única",
     "multi": "Opción múltiple"
   },
+  "settings": {
+    "title": "Ajustes del cuestionario",
+    "leaderboard": "Clasificación",
+    "leaderboardMode": "Mostrar clasificación",
+    "leaderboardMode.question": "Después de cada pregunta",
+    "leaderboardMode.end": "Solo al final",
+    "leaderboardModeHint.question": "La clasificación interrumpe la partida tras cada pregunta",
+    "leaderboardModeHint.end": "La clasificación se muestra una vez, justo antes del podio"
+  },
   "titleQuizzPlaceholder": "Título del cuestionario..."
 }

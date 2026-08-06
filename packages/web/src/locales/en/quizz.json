@@ -44,5 +44,14 @@
     "single": "Single choice",
     "multi": "Multiple choice"
   },
+  "settings": {
+    "title": "Quizz settings",
+    "leaderboard": "Leaderboard",
+    "leaderboardMode": "Show leaderboard",
+    "leaderboardMode.question": "After every question",
+    "leaderboardMode.end": "At the end only",
+    "leaderboardModeHint.question": "The standings interrupt the game after each question",
+    "leaderboardModeHint.end": "The standings are shown once, just before the podium"
+  },
   "titleQuizzPlaceholder": "Quizz title..."
 }

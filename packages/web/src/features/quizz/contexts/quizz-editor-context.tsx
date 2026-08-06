@@ -1,5 +1,12 @@
-import { QUESTION_TYPES } from "@razzia/common/constants"
-import type { Question, QuizzWithId } from "@razzia/common/types/game"
+import {
+  DEFAULT_QUIZZ_SETTINGS,
+  QUESTION_TYPES,
+} from "@razzia/common/constants"
+import type {
+  Question,
+  QuizzSettings,
+  QuizzWithId,
+} from "@razzia/common/types/game"
 import {
   createContext,
   useContext,
@@ -16,6 +23,10 @@ interface QuizzEditorContextType {
   quizzId: string | null
   subject: string
   setSubject: (_subject: string) => void
+  settings: QuizzSettings
+  updateSettings: (_updates: Partial<QuizzSettings>) => void
+  isSettingsOpen: boolean
+  toggleSettings: () => void
   questions: QuestionWithId[]
   currentIndex: number
   currentQuestion: QuestionWithId
@@ -57,6 +68,10 @@ export const QuizzEditorProvider = ({
   const [subject, setSubject] = useState(
     initialData?.subject ?? "Untitled Quizz",
   )
+  const [settings, setSettings] = useState<QuizzSettings>(
+    initialData?.settings ?? DEFAULT_QUIZZ_SETTINGS,
+  )
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [questions, setQuestions] = useState<QuestionWithId[]>(
     initialData
       ? initialData.questions.map(toQuestionWithId)
@@ -64,6 +79,14 @@ export const QuizzEditorProvider = ({
   )
   const [currentIndex, setCurrentIndex] = useState(0)
   const currentQuestion = questions[clampIndex(currentIndex, questions)]
+
+  const updateSettings = (updates: Partial<QuizzSettings>) => {
+    setSettings((prev) => ({ ...prev, ...updates }))
+  }
+
+  const toggleSettings = () => {
+    setIsSettingsOpen((prev) => !prev)
+  }
 
   const addQuestion = () => {
     setQuestions((prev) => [...prev, defaultQuestion()])
@@ -110,6 +133,10 @@ export const QuizzEditorProvider = ({
         quizzId: initialData?.id ?? null,
         subject,
         setSubject,
+        settings,
+        updateSettings,
+        isSettingsOpen,
+        toggleSettings,
         questions,
         currentIndex,
         currentQuestion,

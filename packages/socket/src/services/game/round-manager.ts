@@ -1,5 +1,10 @@
 // oxlint-disable typescript/no-unnecessary-condition
-import { EVENTS, MEDIA_TYPES, NO_TIME_LIMIT } from "@razzia/common/constants"
+import {
+  EVENTS,
+  LEADERBOARD_MODES,
+  MEDIA_TYPES,
+  NO_TIME_LIMIT,
+} from "@razzia/common/constants"
 import type {
   Answer,
   GameResult,
@@ -53,6 +58,8 @@ export class RoundManager {
   private leaderboard: Player[] = []
   private tempOldLeaderboard: Player[] | null = null
   private questionsHistory: QuestionResult[] = []
+  private leaderboardShown = false
+  private finalLeaderboardShown = false
 
   constructor(opts: RoundManagerOptions) {
     this.opts = opts
@@ -246,6 +253,64 @@ export class RoundManager {
     this.playersAnswers = []
   }
 
+  // ── Flow control ─────────────────────────────────────────────────────────
+
+  private isLastQuestion(): boolean {
+    return this.currentQuestion + 1 === this.opts.quizz.questions.length
+  }
+
+  private presentLeaderboard(): void {
+    const oldLeaderboard = this.tempOldLeaderboard ?? this.leaderboard
+
+    this.opts.send(this.opts.getManagerId(), STATUS.SHOW_LEADERBOARD, {
+      oldLeaderboard: oldLeaderboard.slice(0, 5),
+      leaderboard: this.leaderboard.slice(0, 5),
+    })
+
+    this.tempOldLeaderboard = null
+    this.leaderboardShown = true
+  }
+
+  private startNextQuestion(): void {
+    if (!this.opts.quizz.questions[this.currentQuestion + 1]) {
+      return
+    }
+
+    this.currentQuestion += 1
+    void this.newQuestion()
+  }
+
+  private finish(): void {
+    this.started = false
+
+    const top = this.leaderboard.slice(0, 3)
+
+    this.opts.onGameFinished({
+      id: `${Date.now()}-${nanoid(8)}`,
+      subject: this.opts.quizz.subject,
+      date: new Date().toISOString(),
+      players: this.leaderboard.map((player, index) => ({
+        username: player.username,
+        points: player.points,
+        rank: index + 1,
+      })),
+      questions: this.questionsHistory,
+    })
+
+    this.opts.send(this.opts.getManagerId(), STATUS.FINISHED, {
+      subject: this.opts.quizz.subject,
+      top,
+    })
+
+    this.leaderboard.forEach((player, index) => {
+      this.opts.send(player.id, STATUS.FINISHED, {
+        subject: this.opts.quizz.subject,
+        top,
+        rank: index + 1,
+      })
+    })
+  }
+
   selectAnswer(socket: Socket, answerIds: number[]): void {
     const player = this.opts.players.findById(socket.id)
     const question = this.opts.quizz.questions[this.currentQuestion]
@@ -299,12 +364,15 @@ export class RoundManager {
       return
     }
 
-    if (!this.opts.quizz.questions[this.currentQuestion + 1]) {
+    // In `end` mode the standings are the last screen before the podium, so
+    // the manager's next press has to close the game off rather than no-op.
+    if (this.finalLeaderboardShown) {
+      this.finish()
+
       return
     }
 
-    this.currentQuestion += 1
-    void this.newQuestion()
+    this.startNextQuestion()
   }
 
   abortQuestion(socket: Socket): void {
@@ -324,49 +392,34 @@ export class RoundManager {
       return
     }
 
-    const isLastRound =
-      this.currentQuestion + 1 === this.opts.quizz.questions.length
+    const { leaderboard } = this.opts.quizz.settings
 
-    if (isLastRound) {
-      this.started = false
+    if (this.isLastQuestion()) {
+      // In `question` mode the podium already closes the game off, so the
+      // standings only need their own screen when they were skipped: always
+      // in `end` mode, and in a one-question game that never reached them.
+      // The game then finishes on the next press.
+      const needsFinalLeaderboard =
+        leaderboard === LEADERBOARD_MODES.END || !this.leaderboardShown
 
-      const top = this.leaderboard.slice(0, 3)
+      if (needsFinalLeaderboard && !this.finalLeaderboardShown) {
+        this.finalLeaderboardShown = true
+        this.presentLeaderboard()
 
-      this.opts.onGameFinished({
-        id: `${Date.now()}-${nanoid(8)}`,
-        subject: this.opts.quizz.subject,
-        date: new Date().toISOString(),
-        players: this.leaderboard.map((player, index) => ({
-          username: player.username,
-          points: player.points,
-          rank: index + 1,
-        })),
-        questions: this.questionsHistory,
-      })
+        return
+      }
 
-      this.opts.send(this.opts.getManagerId(), STATUS.FINISHED, {
-        subject: this.opts.quizz.subject,
-        top,
-      })
-
-      this.leaderboard.forEach((player, index) => {
-        this.opts.send(player.id, STATUS.FINISHED, {
-          subject: this.opts.quizz.subject,
-          top,
-          rank: index + 1,
-        })
-      })
+      this.finish()
 
       return
     }
 
-    const oldLeaderboard = this.tempOldLeaderboard ?? this.leaderboard
+    if (leaderboard !== LEADERBOARD_MODES.QUESTION) {
+      this.startNextQuestion()
 
-    this.opts.send(this.opts.getManagerId(), STATUS.SHOW_LEADERBOARD, {
-      oldLeaderboard: oldLeaderboard.slice(0, 5),
-      leaderboard: this.leaderboard.slice(0, 5),
-    })
+      return
+    }
 
-    this.tempOldLeaderboard = null
+    this.presentLeaderboard()
   }
 }

@@ -14,6 +14,9 @@ Example quiz configuration (`config/quizz/example.json`):
 ```json
 {
   "subject": "Example Quiz",
+  "settings": {
+    "leaderboard": "end"
+  },
   "questions": [
     {
       "question": "What is the correct answer?",
@@ -47,6 +50,10 @@ Example quiz configuration (`config/quizz/example.json`):
 Quiz Options:
 
 - `subject`: Title/topic of the quiz
+- `settings`: Optional object controlling how the game is presented. Omit it (or any field inside it) to keep the defaults:
+  - `leaderboard`: When the standings get their own screen (default: `"question"`):
+    - `"question"`: after every question, as an interruption between questions
+    - `"end"`: skipped between questions and shown once, just before the podium
 - `questions`: Array of question objects containing:
   - `question`: The question text
   - `answers`: Array of possible answers (2-4 options)
